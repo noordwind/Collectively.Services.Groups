@@ -2,12 +2,27 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
+    <AssemblyName>Collectively.Services.Groups.Tests</AssemblyName>
+    <PackageId>Collectively.Services.Groups.Tests</PackageId>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../../src/Collectively.Services.Groups/Collectively.Services.Groups.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
-    <PackageReference Include="xunit" Version="2.2.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
+    <PackageReference Include="FluentAssertions" Version="4.*" />
+    <PackageReference Include="Machine.Specifications" Version="0.11.0" />
+    <PackageReference Include="Machine.Specifications.Should" Version="0.11.0" />
+    <PackageReference Include="Machine.Specifications.Runner.VisualStudio" Version="2.*" />
+    <PackageReference Include="Moq" Version="4.*" />
+    <PackageReference Include="RawRabbit" Version="1.10.3" />
+    <PackageReference Include="RawRabbit.vNext" Version="1.10.3" />
+    <PackageReference Include="Collectively.Messages" Version="1.0.*" />
+    <PackageReference Include="Collectively.Common" Version="1.0.*" />   
   </ItemGroup>
 
 </Project>

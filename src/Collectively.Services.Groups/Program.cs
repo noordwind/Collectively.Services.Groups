@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+﻿using Collectively.Common.Host;
+using Collectively.Messages.Commands.Users;
+using Collectively.Services.Groups.Framework;
 
 namespace Collectively.Services.Groups
 {
@@ -12,14 +8,21 @@ namespace Collectively.Services.Groups
     {
         public static void Main(string[] args)
         {
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseStartup<Startup>()
-                .Build();
-
-            host.Run();
+            WebServiceHost
+                .Create<Startup>(args: args)
+                .UseAutofac(Bootstrapper.LifetimeScope)
+                .UseRabbitMq(queueName: typeof(Program).Namespace)
+                // .SubscribeToCommand<SignUp>()
+                // .SubscribeToCommand<SignOut>()
+                // .SubscribeToCommand<ChangeUsername>()
+                // .SubscribeToCommand<UploadAvatar>()
+                // .SubscribeToCommand<RemoveAvatar>()
+                // .SubscribeToCommand<ChangePassword>()
+                // .SubscribeToCommand<ResetPassword>()
+                // .SubscribeToCommand<SetNewPassword>()
+                // .SubscribeToCommand<PostOnFacebookWall>()
+                .Build()
+                .Run();
         }
     }
 }
