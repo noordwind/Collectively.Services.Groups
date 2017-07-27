@@ -48,10 +48,10 @@ Clone the repository and start the application via *dotnet run* command:
 git clone https://github.com/noordwind/Collectively.Services.Groups
 cd Collectively.Services.Groups/Collectively.Services.Groups
 dotnet restore --source https://api.nuget.org/v3/index.json --source https://www.myget.org/F/collectively/api/v3/index.json --no-cache
-dotnet run --urls "http://*:10002"
+dotnet run --urls "http://*:10007"
 ```
 
-Once executed, you shall be able to access the service at [http://localhost:10002](http://localhost:10002)
+Once executed, you shall be able to access the service at [http://localhost:10007](http://localhost:10007)
 
 Please note that the following solution will only run the Groups Service which is merely one of the many parts required to run properly the whole Collectively system.
 
