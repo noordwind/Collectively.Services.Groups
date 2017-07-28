@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Collectively.Common.Domain;
+using Collectively.Services.Groups.Framework;
 
 namespace Collectively.Services.Groups.Domain
 {
@@ -30,6 +31,19 @@ namespace Collectively.Services.Groups.Domain
         {
             get { return _criteria; }
             protected set { _criteria = new Dictionary<string,string>(value); }
-        }         
+        }
+
+        protected Organization()
+        {
+        } 
+
+        public Organization(string name, string userId)
+        {
+            Name = name;
+            _members.Add(new Member());
+            Codename = name.ToCodename();
+            CreatedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
+        }        
     }
 }

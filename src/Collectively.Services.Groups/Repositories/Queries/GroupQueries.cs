@@ -6,6 +6,7 @@ using Collectively.Common.Extensions;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using Collectively.Services.Groups.Queries;
+using Collectively.Services.Groups.Framework;
 
 namespace Collectively.Services.Groups.Repositories.Queries
 {
@@ -15,9 +16,9 @@ namespace Collectively.Services.Groups.Repositories.Queries
             => database.GetCollection<Group>();
 
         public static async Task<bool> ExistsAsync(this IMongoCollection<Group> groups, string name)
-            => await groups.AsQueryable().AnyAsync(x => x.Name == name);
+            => await groups.AsQueryable().AnyAsync(x => x.Codename == name);
 
-        public static async Task<Group> GetByIdAsync(this IMongoCollection<Group> groups, Guid id)
+        public static async Task<Group> GetAsync(this IMongoCollection<Group> groups, Guid id)
         {
             if (id.IsEmpty())
                 return null;
@@ -25,20 +26,14 @@ namespace Collectively.Services.Groups.Repositories.Queries
             return await groups.AsQueryable().FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public static async Task<Group> GetByCodenameAsync(this IMongoCollection<Group> groups, string codename)
-        {
-            if (codename.Empty())
-                return null;
-
-            return await groups.AsQueryable().FirstOrDefaultAsync(x => x.Codename == codename);
-        }
-
-        public static async Task<Group> GetByNameAsync(this IMongoCollection<Group> groups, string name)
+        public static async Task<Group> GetAsync(this IMongoCollection<Group> groups, string name)
         {
             if (name.Empty())
                 return null;
 
-            return await groups.AsQueryable().FirstOrDefaultAsync(x => x.Name == name);
+            var codename = name.ToCodename();
+
+            return await groups.AsQueryable().FirstOrDefaultAsync(x => x.Codename == codename);
         }
 
         public static IMongoQueryable<Group> Query(this IMongoCollection<Group> groups, 

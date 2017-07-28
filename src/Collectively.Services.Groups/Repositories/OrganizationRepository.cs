@@ -21,11 +21,11 @@ namespace Collectively.Services.Groups.Repositories
         public async Task<bool> ExistsAsync(string name)
         => await _database.Organizations().ExistsAsync(name);
 
-        public async Task<Maybe<Organization>> GetByIdAsync(Guid id)
-        => await _database.Organizations().GetByIdAsync(id);
+        public async Task<Maybe<Organization>> GetAsync(Guid id)
+        => await _database.Organizations().GetAsync(id);
 
-        public async Task<Maybe<Organization>> GetByCodenameAsync(string codename)
-        => await _database.Organizations().GetByCodenameAsync(codename);
+        public async Task<Maybe<Organization>> GetAsync(string name)
+        => await _database.Organizations().GetAsync(name);
 
         public async Task<Maybe<PagedResult<Organization>>> BrowseAsync(BrowseOrganizations query)
         => await _database.Organizations().Query(query).PaginateAsync(query);

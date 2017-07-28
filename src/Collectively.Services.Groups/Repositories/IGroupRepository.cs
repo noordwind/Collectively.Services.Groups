@@ -9,8 +9,8 @@ namespace Collectively.Services.Groups.Repositories
     public interface IGroupRepository
     {
         Task<bool> ExistsAsync(string name); 
-        Task<Maybe<Group>> GetByIdAsync(Guid id);
-        Task<Maybe<Group>> GetByCodenameAsync(string codename);
+        Task<Maybe<Group>> GetAsync(Guid id);
+        Task<Maybe<Group>> GetAsync(string name);
         Task<Maybe<PagedResult<Group>>> BrowseAsync(BrowseGroups query);
         Task AddAsync(Group group);
         Task UpdateAsync(Group group);

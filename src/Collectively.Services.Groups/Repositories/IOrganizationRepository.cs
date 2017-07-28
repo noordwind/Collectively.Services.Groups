@@ -9,8 +9,8 @@ namespace Collectively.Services.Groups.Repositories
     public interface IOrganizationRepository
     {
         Task<bool> ExistsAsync(string name); 
-        Task<Maybe<Organization>> GetByIdAsync(Guid id);
-        Task<Maybe<Organization>> GetByCodenameAsync(string codename);
+        Task<Maybe<Organization>> GetAsync(Guid id);
+        Task<Maybe<Organization>> GetAsync(string name);
         Task<Maybe<PagedResult<Organization>>> BrowseAsync(BrowseOrganizations query);
         Task AddAsync(Organization organization);
         Task UpdateAsync(Organization organization);
