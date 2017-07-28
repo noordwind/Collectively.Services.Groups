@@ -21,6 +21,7 @@ using Newtonsoft.Json;
 using Collectively.Common.Extensions;
 using System;
 using Collectively.Messages.Events.Users;
+using Collectively.Services.Groups.Repositories;
 
 namespace Collectively.Services.Groups.Framework
 {
@@ -58,6 +59,8 @@ namespace Collectively.Services.Groups.Framework
                 builder.RegisterInstance(_configuration.GetSettings<ExceptionlessSettings>()).SingleInstance();
                 builder.RegisterType<ExceptionlessExceptionHandler>().As<IExceptionHandler>().SingleInstance();
                 builder.RegisterModule(new FilesModule(_configuration));
+                builder.RegisterType<GroupRepository>().As<IGroupRepository>();
+                builder.RegisterType<OrganizationRepository>().As<IOrganizationRepository>();
 
                 var assembly = typeof(Startup).GetTypeInfo().Assembly;
                 builder.RegisterAssemblyTypes(assembly).AsClosedTypesOf(typeof(ICommandHandler<>));
