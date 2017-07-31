@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Collectively.Common.Domain;
 using Collectively.Common.Types;
 using Collectively.Services.Groups.Domain;
+using Collectively.Services.Groups.Queries;
 using Collectively.Services.Groups.Repositories;
 
 namespace Collectively.Services.Groups.Services
@@ -28,6 +29,9 @@ namespace Collectively.Services.Groups.Services
 
         public async Task<Maybe<Group>> GetAsync(Guid id)
         => await _groupRepository.GetAsync(id);
+
+        public async Task<Maybe<PagedResult<Group>>> BrowseAsync(BrowseGroups query)
+        => await _groupRepository.BrowseAsync(query);
 
         public async Task CreateAsync(string name, string userId, 
             IDictionary<string,string> criteria, Guid? organizationId = null)

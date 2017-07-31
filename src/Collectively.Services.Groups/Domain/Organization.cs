@@ -39,6 +39,10 @@ namespace Collectively.Services.Groups.Domain
 
         public Organization(string name, Member member, IDictionary<string,string> criteria)
         {
+            if(name.Length > 100)
+            {
+                throw new DomainException(OperationCodes.InvalidName, "Invalid organization name.");
+            }
             Name = name;
             Codename = name.ToCodename();
             _members.Add(member);

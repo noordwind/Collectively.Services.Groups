@@ -25,6 +25,7 @@ using Collectively.Messages.Events.Users;
 using Collectively.Services.Groups.Repositories;
 using Collectively.Services.Groups.Services;
 using Collectively.Common.ServiceClients;
+using Collectively.Messages.Events.Groups;
 
 namespace Collectively.Services.Groups.Framework
 {
@@ -69,6 +70,8 @@ namespace Collectively.Services.Groups.Framework
                 builder.RegisterType<OrganizationService>().As<IOrganizationService>();
                 builder.RegisterType<UserService>().As<IUserService>();
                 builder.RegisterModule<ServiceClientModule>();
+                builder.RegisterInstance(AutoMapperConfig.InitializeMapper());
+                RegisterResourceFactory(builder);
 
                 var assembly = typeof(Startup).GetTypeInfo().Assembly;
                 builder.RegisterAssemblyTypes(assembly).AsClosedTypesOf(typeof(IEventHandler<>));
@@ -105,6 +108,16 @@ namespace Collectively.Services.Groups.Framework
             pipelines.SetupTokenAuthentication(container);
             _exceptionHandler = container.Resolve<IExceptionHandler>();
             Logger.Info("Collectively.Services.Groups API has started.");
+        }
+
+        private void RegisterResourceFactory(ContainerBuilder builder)
+        {
+            var resources = new Dictionary<Type, string>
+            {
+                [typeof(GroupCreated)] = "groups/{0}",
+                [typeof(OrganizationCreated)] = "organizations/{0}",
+            };
+            builder.RegisterModule(new ResourceFactory.Module(resources));
         }
     }
 }

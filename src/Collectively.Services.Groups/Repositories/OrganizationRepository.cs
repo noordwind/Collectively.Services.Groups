@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Collectively.Common.Mongo;
 using Collectively.Common.Types;
 using Collectively.Services.Groups.Domain;
+using Collectively.Services.Groups.Framework;
 using Collectively.Services.Groups.Queries;
 using Collectively.Services.Groups.Repositories.Queries;
 using MongoDB.Driver;
@@ -19,7 +20,7 @@ namespace Collectively.Services.Groups.Repositories
         }
 
         public async Task<bool> ExistsAsync(string name)
-        => await _database.Organizations().ExistsAsync(name);
+        => await _database.Organizations().ExistsAsync(name.ToCodename());
 
         public async Task<Maybe<Organization>> GetAsync(Guid id)
         => await _database.Organizations().GetAsync(id);

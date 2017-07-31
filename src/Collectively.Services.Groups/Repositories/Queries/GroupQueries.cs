@@ -15,8 +15,8 @@ namespace Collectively.Services.Groups.Repositories.Queries
         public static IMongoCollection<Group> Groups(this IMongoDatabase database)
             => database.GetCollection<Group>();
 
-        public static async Task<bool> ExistsAsync(this IMongoCollection<Group> groups, string name)
-            => await groups.AsQueryable().AnyAsync(x => x.Codename == name);
+        public static async Task<bool> ExistsAsync(this IMongoCollection<Group> groups, string codename)
+            => await groups.AsQueryable().AnyAsync(x => x.Codename == codename);
 
         public static async Task<Group> GetAsync(this IMongoCollection<Group> groups, Guid id)
         {

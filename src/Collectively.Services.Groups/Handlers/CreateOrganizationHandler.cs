@@ -13,14 +13,17 @@ namespace Collectively.Services.Groups.Handlers
         private readonly IHandler _handler;
         private readonly IBusClient _bus;
         private readonly IGroupService _groupService;
+        private readonly IResourceFactory _resourceFactory;
 
         public CreateOrganizationHandler(IHandler handler,
             IBusClient bus, 
-            IGroupService groupService)
+            IGroupService groupService,
+            IResourceFactory resourceFactory)
         {
             _handler = handler;
             _bus = bus;
             _groupService = groupService;
+            _resourceFactory = resourceFactory;
         }
 
         public async Task HandleAsync(CreateOrganization command)
@@ -28,9 +31,12 @@ namespace Collectively.Services.Groups.Handlers
             await _handler
                 .Run(async () => await _groupService.CreateAsync(command.Name,
                     command.UserId, command.Criteria))
-                .OnSuccess(async () => await _bus.PublishAsync(
-                    new OrganizationCreated(command.Request.Id, command.UserId,
-                        command.OrganizationId)))
+                .OnSuccess(async () => 
+                {
+                    var resource = _resourceFactory.Resolve<OrganizationCreated>(command.OrganizationId);
+                    await _bus.PublishAsync(new OrganizationCreated(command.Request.Id, 
+                        resource, command.UserId, command.OrganizationId));
+                })
                 .OnCustomError(async ex => await _bus.PublishAsync(
                     new CreateOrganizationRejected(command.Request.Id, command.UserId,
                         command.OrganizationId, ex.Code, ex.Message)))
