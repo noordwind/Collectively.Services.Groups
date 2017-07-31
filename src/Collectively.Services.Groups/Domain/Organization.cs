@@ -37,11 +37,12 @@ namespace Collectively.Services.Groups.Domain
         {
         } 
 
-        public Organization(string name, string userId)
+        public Organization(string name, Member member, IDictionary<string,string> criteria)
         {
             Name = name;
-            _members.Add(new Member());
             Codename = name.ToCodename();
+            _members.Add(member);
+            _criteria = criteria;            
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
         }        

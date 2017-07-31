@@ -32,13 +32,16 @@ namespace Collectively.Services.Groups.Domain
         {
         } 
 
-        public Group(string name, string userId)
+        public Group(string name, Member member, 
+            IDictionary<string,string> criteria, Organization organization = null)
         {
             Name = name;
-            _members.Add(new Member());
             Codename = name.ToCodename();
+            _members.Add(member);
+            _criteria = criteria;   
+            Organization = organization == null ? null : OrganizationInfo.Create(organization);
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
-        } 
+        }  
     }
 }

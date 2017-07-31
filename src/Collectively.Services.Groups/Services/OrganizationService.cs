@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Collectively.Common.Domain;
 using Collectively.Common.Types;
@@ -10,10 +11,13 @@ namespace Collectively.Services.Groups.Services
     public class OrganizationService : IOrganizationService
     {
         private readonly IOrganizationRepository _organizationRepository;
+        private readonly IUserRepository _userRepository;
 
-        public OrganizationService(IOrganizationRepository organizationRepository)
+        public OrganizationService(IOrganizationRepository organizationRepository,
+            IUserRepository userRepository)
         {
             _organizationRepository = organizationRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<bool> ExistsAsync(string name)
@@ -22,14 +26,16 @@ namespace Collectively.Services.Groups.Services
         public async Task<Maybe<Organization>> GetAsync(Guid id)
         => await _organizationRepository.GetAsync(id);
 
-        public async Task CreateAsync(string name, string userId)
+        public async Task CreateAsync(string name, string userId, IDictionary<string,string> criteria)
         {
             if(await ExistsAsync(name))
             {
                 throw new ServiceException(OperationCodes.OrganizationNameInUse,
                     $"Organization with name: '{name}' already exists.");
             }
-            var organization = new Organization(name, userId);
+            var user = await _userRepository.GetAsync(userId);
+            var owner = Member.Owner(user.Value.UserId, user.Value.Role, user.Value.AvatarUrl);
+            var organization = new Organization(name, owner, criteria);
             await _organizationRepository.AddAsync(organization);
         }
     }

@@ -20,9 +20,11 @@ using Nancy.Configuration;
 using Newtonsoft.Json;
 using Collectively.Common.Extensions;
 using System;
+using Collectively.Messages.Events;
 using Collectively.Messages.Events.Users;
 using Collectively.Services.Groups.Repositories;
 using Collectively.Services.Groups.Services;
+using Collectively.Common.ServiceClients;
 
 namespace Collectively.Services.Groups.Framework
 {
@@ -62,10 +64,14 @@ namespace Collectively.Services.Groups.Framework
                 builder.RegisterModule(new FilesModule(_configuration));
                 builder.RegisterType<GroupRepository>().As<IGroupRepository>();
                 builder.RegisterType<OrganizationRepository>().As<IOrganizationRepository>();
+                builder.RegisterType<UserRepository>().As<IUserRepository>();
                 builder.RegisterType<GroupService>().As<IGroupService>();
                 builder.RegisterType<OrganizationService>().As<IOrganizationService>();
+                builder.RegisterType<UserService>().As<IUserService>();
+                builder.RegisterModule<ServiceClientModule>();
 
                 var assembly = typeof(Startup).GetTypeInfo().Assembly;
+                builder.RegisterAssemblyTypes(assembly).AsClosedTypesOf(typeof(IEventHandler<>));
                 builder.RegisterAssemblyTypes(assembly).AsClosedTypesOf(typeof(ICommandHandler<>));
 
                 SecurityContainer.Register(builder, _configuration);
