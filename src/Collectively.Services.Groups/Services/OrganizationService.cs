@@ -30,7 +30,8 @@ namespace Collectively.Services.Groups.Services
         public async Task<Maybe<PagedResult<Organization>>> BrowseAsync(BrowseOrganizations query)
         => await _organizationRepository.BrowseAsync(query);
 
-        public async Task CreateAsync(string name, string userId, IDictionary<string,string> criteria)
+        public async Task CreateAsync(string name, string userId, 
+            bool isPublic, IDictionary<string,string> criteria)
         {
             if(await ExistsAsync(name))
             {
@@ -39,7 +40,7 @@ namespace Collectively.Services.Groups.Services
             }
             var user = await _userRepository.GetAsync(userId);
             var owner = Member.Owner(user.Value.UserId, user.Value.Role, user.Value.AvatarUrl);
-            var organization = new Organization(name, owner, criteria);
+            var organization = new Organization(name, owner, isPublic, criteria);
             await _organizationRepository.AddAsync(organization);
         }
     }

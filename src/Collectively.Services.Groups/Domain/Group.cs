@@ -32,7 +32,7 @@ namespace Collectively.Services.Groups.Domain
         {
         } 
 
-        public Group(string name, Member member, 
+        public Group(string name, Member member, bool isPublic,
             IDictionary<string,string> criteria, Organization organization = null)
         {
             if(name.Length > 100)
@@ -42,7 +42,8 @@ namespace Collectively.Services.Groups.Domain
             Name = name;
             Codename = name.ToCodename();
             _members.Add(member);
-            _criteria = criteria;   
+            IsPublic = isPublic;
+            _criteria = criteria ?? new Dictionary<string,string>(); 
             Organization = organization == null ? null : OrganizationInfo.Create(organization);
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;

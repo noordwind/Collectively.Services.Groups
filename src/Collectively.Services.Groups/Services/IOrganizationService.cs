@@ -12,6 +12,7 @@ namespace Collectively.Services.Groups.Services
         Task<bool> ExistsAsync(string name);
         Task<Maybe<Organization>> GetAsync(Guid id);
         Task<Maybe<PagedResult<Organization>>> BrowseAsync(BrowseOrganizations query);
-        Task CreateAsync(string name, string userId, IDictionary<string,string> criteria);
+        Task CreateAsync(string name, string userId, 
+            bool isPublic, IDictionary<string,string> criteria);
     }
 }

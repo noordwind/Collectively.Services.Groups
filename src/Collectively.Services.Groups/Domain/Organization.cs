@@ -37,7 +37,8 @@ namespace Collectively.Services.Groups.Domain
         {
         } 
 
-        public Organization(string name, Member member, IDictionary<string,string> criteria)
+        public Organization(string name, Member member, 
+            bool isPublic, IDictionary<string,string> criteria)
         {
             if(name.Length > 100)
             {
@@ -46,7 +47,8 @@ namespace Collectively.Services.Groups.Domain
             Name = name;
             Codename = name.ToCodename();
             _members.Add(member);
-            _criteria = criteria;            
+            IsPublic = isPublic;
+            _criteria = criteria ?? new Dictionary<string,string>();            
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
         }        
