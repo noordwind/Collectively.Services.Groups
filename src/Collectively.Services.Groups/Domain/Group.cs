@@ -9,7 +9,7 @@ namespace Collectively.Services.Groups.Domain
     {
         private IDictionary<string,string> _criteria = new Dictionary<string,string>();
         private ISet<Member> _members = new HashSet<Member>();
-        public OrganizationInfo Organization { get; protected set; }
+        public Guid? OrganizationId { get; protected set; }
         public string Name { get; protected set; }
         public string Codename { get; protected set; }
         public bool IsPublic { get; protected set; }
@@ -32,19 +32,20 @@ namespace Collectively.Services.Groups.Domain
         {
         } 
 
-        public Group(string name, Member member, bool isPublic,
-            IDictionary<string,string> criteria, Organization organization = null)
+        public Group(Guid id, string name, Member member, bool isPublic,
+            IDictionary<string,string> criteria, Guid? organizationId = null)
         {
             if(name.Length > 100)
             {
                 throw new DomainException(OperationCodes.InvalidName, "Invalid group name.");
             }
+            Id = id;
             Name = name;
             Codename = name.ToCodename();
             _members.Add(member);
             IsPublic = isPublic;
             _criteria = criteria ?? new Dictionary<string,string>(); 
-            Organization = organization == null ? null : OrganizationInfo.Create(organization);
+            OrganizationId = organizationId;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
         }  

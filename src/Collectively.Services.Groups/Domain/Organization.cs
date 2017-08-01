@@ -37,13 +37,14 @@ namespace Collectively.Services.Groups.Domain
         {
         } 
 
-        public Organization(string name, Member member, 
+        public Organization(Guid id, string name, Member member, 
             bool isPublic, IDictionary<string,string> criteria)
         {
             if(name.Length > 100)
             {
                 throw new DomainException(OperationCodes.InvalidName, "Invalid organization name.");
             }
+            Id = id;
             Name = name;
             Codename = name.ToCodename();
             _members.Add(member);

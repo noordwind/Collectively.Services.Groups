@@ -12,25 +12,25 @@ namespace Collectively.Services.Groups.Handlers
     {
         private readonly IHandler _handler;
         private readonly IBusClient _bus;
-        private readonly IGroupService _groupService;
+        private readonly IOrganizationService _organizationService;
         private readonly IResourceFactory _resourceFactory;
 
         public CreateOrganizationHandler(IHandler handler,
             IBusClient bus, 
-            IGroupService groupService,
+            IOrganizationService organizationService,
             IResourceFactory resourceFactory)
         {
             _handler = handler;
             _bus = bus;
-            _groupService = groupService;
+            _organizationService = organizationService;
             _resourceFactory = resourceFactory;
         }
 
         public async Task HandleAsync(CreateOrganization command)
         {
             await _handler
-                .Run(async () => await _groupService.CreateAsync(command.Name,
-                    command.UserId, command.IsPublic, command.Criteria))
+                .Run(async () => await _organizationService.CreateAsync(command.OrganizationId, 
+                    command.Name, command.UserId, command.IsPublic, command.Criteria))
                 .OnSuccess(async () => 
                 {
                     var resource = _resourceFactory.Resolve<OrganizationCreated>(command.OrganizationId);
