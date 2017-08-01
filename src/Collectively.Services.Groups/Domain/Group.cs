@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Collectively.Common.Domain;
 using Collectively.Services.Groups.Framework;
 
@@ -9,6 +10,7 @@ namespace Collectively.Services.Groups.Domain
     {
         private IDictionary<string,string> _criteria = new Dictionary<string,string>();
         private ISet<Member> _members = new HashSet<Member>();
+        private ISet<string> _locations = new HashSet<string>();
         public Guid? OrganizationId { get; protected set; }
         public string Name { get; protected set; }
         public string Codename { get; protected set; }
@@ -22,6 +24,11 @@ namespace Collectively.Services.Groups.Domain
             get { return _members; }
             protected set { _members = new HashSet<Member>(value); }
         }
+        public IEnumerable<string> Locations
+        {
+            get { return _locations; }
+            protected set { _locations = new HashSet<string>(value); }
+        }
         public IDictionary<string,string> Criteria
         {
             get { return _criteria; }
@@ -33,7 +40,8 @@ namespace Collectively.Services.Groups.Domain
         } 
 
         public Group(Guid id, string name, Member member, bool isPublic,
-            IDictionary<string,string> criteria, Guid? organizationId = null)
+            IDictionary<string,string> criteria, Guid? organizationId = null,
+            IEnumerable<string> locations = null)
         {
             if(name.Length > 100)
             {
@@ -41,11 +49,13 @@ namespace Collectively.Services.Groups.Domain
             }
             Id = id;
             Name = name;
+            State = "active";
             Codename = name.ToCodename();
             _members.Add(member);
             IsPublic = isPublic;
-            _criteria = criteria ?? new Dictionary<string,string>(); 
             OrganizationId = organizationId;
+            _criteria = criteria ?? new Dictionary<string,string>(); 
+            _locations = locations == null ? new HashSet<string>() : new HashSet<string>(locations);
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
         }  
