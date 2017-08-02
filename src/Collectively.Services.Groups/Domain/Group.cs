@@ -56,7 +56,8 @@ namespace Collectively.Services.Groups.Domain
             OrganizationId = organizationId;
             _criteria = criteria ?? new Dictionary<string,string>()
             {
-                ["create_remark"] = Domain.Criteria.CreateRemark.Public
+                ["create_remark"] = Domain.Criteria.CreateRemark.Public,
+                ["resolve_remark"] = Domain.Criteria.ResolveRemark.Public
             }; 
             _locations = locations == null ? new HashSet<string>() : new HashSet<string>(locations);
             CreatedAt = DateTime.UtcNow;

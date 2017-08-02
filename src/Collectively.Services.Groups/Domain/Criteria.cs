@@ -9,7 +9,16 @@ namespace Collectively.Services.Groups.Domain
             public static string Moderator => "moderator";
             public static string Administrator => "administrator";
             public static string Owner => "owner";
-        } 
+        }
+
+        public static class ResolveRemark
+        {
+            public static string Public => "public";
+            public static string Member => "member";
+            public static string Moderator => "moderator";
+            public static string Administrator => "administrator";
+            public static string Owner => "owner";
+        }         
 
         public static class Membership
         {
