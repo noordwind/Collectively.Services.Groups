@@ -54,7 +54,10 @@ namespace Collectively.Services.Groups.Domain
             _members.Add(member);
             IsPublic = isPublic;
             OrganizationId = organizationId;
-            _criteria = criteria ?? new Dictionary<string,string>(); 
+            _criteria = criteria ?? new Dictionary<string,string>()
+            {
+                ["create_remark"] = Domain.Criteria.CreateRemark.Public
+            }; 
             _locations = locations == null ? new HashSet<string>() : new HashSet<string>(locations);
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;

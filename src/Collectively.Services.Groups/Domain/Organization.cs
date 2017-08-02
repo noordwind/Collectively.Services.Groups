@@ -46,6 +46,7 @@ namespace Collectively.Services.Groups.Domain
             }
             Id = id;
             Name = name;
+            State = "active";
             Codename = name.ToCodename();
             _members.Add(member);
             IsPublic = isPublic;

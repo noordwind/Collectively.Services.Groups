@@ -31,7 +31,7 @@ namespace Collectively.Services.Groups.Handlers
             await _handler
                 .Run(async () => await _groupService.CreateAsync(command.GroupId, 
                     command.Name, command.UserId, command.IsPublic, command.Criteria, 
-                    command.OrganizationId))
+                    command.Locations, command.OrganizationId))
                 .OnSuccess(async () =>
                 {
                     var resource = _resourceFactory.Resolve<GroupCreated>(command.GroupId);
