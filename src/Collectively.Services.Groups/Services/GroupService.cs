@@ -43,9 +43,10 @@ namespace Collectively.Services.Groups.Services
                     $"Group with name: '{name}' already exists.");
             }
             var user = await _userRepository.GetAsync(userId);
+            Maybe<Organization> organization = null;
             if(organizationId.HasValue)
             {
-                var organization = await _organizationRepository.GetAsync(organizationId.Value);
+                organization = await _organizationRepository.GetAsync(organizationId.Value);
                 if(organization.HasNoValue)
                 {
                     throw new ServiceException(OperationCodes.OrganizationNotFound, 
@@ -56,6 +57,12 @@ namespace Collectively.Services.Groups.Services
             var owner = Member.Owner(user.Value.UserId, user.Value.Name, user.Value.AvatarUrl);
             var group = new Group(id, name, owner, isPublic, criteria, organizationId, locations);
             await _groupRepository.AddAsync(group);
+            if(organization.HasNoValue)
+            {
+                return;
+            }
+            organization.Value.AddGroup(group);
+            await _organizationRepository.UpdateAsync(organization.Value);
         }
     }
 }

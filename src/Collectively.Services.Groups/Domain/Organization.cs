@@ -53,6 +53,11 @@ namespace Collectively.Services.Groups.Domain
             _criteria = criteria ?? new Dictionary<string,string>();            
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void AddGroup(Group group)
+        {
+            _groups.Add(group.Id);
         }        
     }
 }

@@ -13,6 +13,7 @@ namespace Collectively.Services.Groups.Framework
                 cfg.CreateMap<Group, GroupDto>();
                 cfg.CreateMap<Member, MemberDto>();
                 cfg.CreateMap<Organization, OrganizationDto>();
+                cfg.CreateMap<SubjectDetails, SubjectDetailsDto>();
                 cfg.CreateMap<User, UserDto>();
             });
 
