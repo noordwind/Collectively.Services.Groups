@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Collectively.Common.Types;
 using Collectively.Services.Groups.Domain;
@@ -23,5 +24,8 @@ namespace Collectively.Services.Groups.Repositories
 
         public async Task UpdateAsync(User user)
             => await _database.Users().ReplaceOneAsync(x => x.UserId == user.UserId, user);
+
+        public async Task DeleteAsync(string userId)
+            => await _database.Users().DeleteOneAsync(x => x.UserId == userId);
     }
 }

@@ -8,6 +8,7 @@ namespace Collectively.Services.Groups.Repositories
     {
         Task<Maybe<User>> GetAsync(string userId);
         Task AddAsync(User user);
-        Task UpdateAsync(User user);         
+        Task UpdateAsync(User user);
+        Task DeleteAsync(string userId);
     }
 }

@@ -17,6 +17,7 @@ namespace Collectively.Services.Groups
                 .SubscribeToCommand<CreateGroup>()
                 .SubscribeToCommand<CreateOrganization>()
                 .SubscribeToEvent<SignedUp>()
+                .SubscribeToEvent<AccountDeleted>()
                 .Build()
                 .Run();
         }
