@@ -55,8 +55,8 @@ namespace Collectively.Services.Groups.Domain
             OrganizationId = organizationId;
             _criteria = new Dictionary<string,ISet<string>>()
             {
-                ["create_remark"] = new HashSet<string>{Domain.Criteria.CreateRemark.Public},
-                ["resolve_remark"] = new HashSet<string>{Domain.Criteria.ResolveRemark.Public},
+                ["remark_create"] = new HashSet<string>{Domain.Criteria.Remark.Create.Public},
+                ["remark_resolve"] = new HashSet<string>{Domain.Criteria.Remark.Resolve.Public},
                 ["membership"] = new HashSet<string>{Domain.Criteria.Membership.Invitation}
             };
             foreach(var rule in criteria)
