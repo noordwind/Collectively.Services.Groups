@@ -31,7 +31,7 @@ namespace Collectively.Services.Groups.Services
         => await _organizationRepository.BrowseAsync(query);
 
         public async Task CreateAsync(Guid id, string name, string userId, 
-            bool isPublic, IDictionary<string,string> criteria)
+            bool isPublic, IDictionary<string,ISet<string>> criteria)
         {
             if(await ExistsAsync(name))
             {

@@ -8,9 +8,8 @@ namespace Collectively.Services.Groups.Domain
 {
     public class Group : IdentifiableEntity, ITimestampable
     {
-        private IDictionary<string,string> _criteria = new Dictionary<string,string>();
+        private IDictionary<string,ISet<string>> _criteria = new Dictionary<string,ISet<string>>();
         private ISet<Member> _members = new HashSet<Member>();
-        private ISet<string> _locations = new HashSet<string>();
         public Guid? OrganizationId { get; protected set; }
         public string Name { get; protected set; }
         public string Codename { get; protected set; }
@@ -24,15 +23,10 @@ namespace Collectively.Services.Groups.Domain
             get { return _members; }
             protected set { _members = new HashSet<Member>(value); }
         }
-        public IEnumerable<string> Locations
-        {
-            get { return _locations; }
-            protected set { _locations = new HashSet<string>(value); }
-        }
-        public IDictionary<string,string> Criteria
+        public IDictionary<string,ISet<string>> Criteria
         {
             get { return _criteria; }
-            protected set { _criteria = new Dictionary<string,string>(value); }
+            protected set { _criteria = new Dictionary<string,ISet<string>>(value); }
         }
 
         protected Group()
@@ -40,12 +34,17 @@ namespace Collectively.Services.Groups.Domain
         } 
 
         public Group(Guid id, string name, Member member, bool isPublic,
-            IDictionary<string,string> criteria, Guid? organizationId = null,
-            IEnumerable<string> locations = null)
+            IDictionary<string,ISet<string>> criteria, Guid? organizationId = null)
         {
             if(name.Length > 100)
             {
                 throw new DomainException(OperationCodes.InvalidName, "Invalid group name.");
+            }
+            criteria = criteria ?? new Dictionary<string,ISet<string>>();
+            if(criteria.Count > 100)
+            {
+                throw new DomainException(OperationCodes.TooManyCriteria, 
+                    $"Too many criteria: {criteria.Count} (max: 100).");
             }
             Id = id;
             Name = name;
@@ -54,12 +53,16 @@ namespace Collectively.Services.Groups.Domain
             _members.Add(member);
             IsPublic = isPublic;
             OrganizationId = organizationId;
-            _criteria = criteria ?? new Dictionary<string,string>()
+            _criteria = new Dictionary<string,ISet<string>>()
             {
-                ["create_remark"] = Domain.Criteria.CreateRemark.Public,
-                ["resolve_remark"] = Domain.Criteria.ResolveRemark.Public
-            }; 
-            _locations = locations == null ? new HashSet<string>() : new HashSet<string>(locations);
+                ["create_remark"] = new HashSet<string>{Domain.Criteria.CreateRemark.Public},
+                ["resolve_remark"] = new HashSet<string>{Domain.Criteria.ResolveRemark.Public},
+                ["membership"] = new HashSet<string>{Domain.Criteria.Membership.Invitation}
+            };
+            foreach(var rule in criteria)
+            {
+                _criteria[rule.Key.ToLowerInvariant()] = rule.Value;
+            } 
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
         }  

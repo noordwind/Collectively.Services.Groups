@@ -7,9 +7,9 @@ namespace Collectively.Services.Groups.Domain
 {
     public class Organization : IdentifiableEntity, ITimestampable
     {
-        private IDictionary<string,string> _criteria = new Dictionary<string,string>();
-        private ISet<Guid> _groups = new HashSet<Guid>();
+        private IDictionary<string,ISet<string>> _criteria = new Dictionary<string,ISet<string>>();
         private ISet<Member> _members = new HashSet<Member>();
+        private ISet<Guid> _groups = new HashSet<Guid>();
         public string Name { get; protected set; }
         public string Codename { get; protected set; }
         public bool IsPublic { get; protected set; }
@@ -27,10 +27,10 @@ namespace Collectively.Services.Groups.Domain
             get { return _members; }
             protected set { _members = new HashSet<Member>(value); }
         }
-        public IDictionary<string,string> Criteria
+        public IDictionary<string,ISet<string>> Criteria
         {
             get { return _criteria; }
-            protected set { _criteria = new Dictionary<string,string>(value); }
+            protected set { _criteria = new Dictionary<string,ISet<string>>(value); }
         }
 
         protected Organization()
@@ -38,11 +38,17 @@ namespace Collectively.Services.Groups.Domain
         } 
 
         public Organization(Guid id, string name, Member member, 
-            bool isPublic, IDictionary<string,string> criteria)
+            bool isPublic, IDictionary<string,ISet<string>> criteria)
         {
             if(name.Length > 100)
             {
                 throw new DomainException(OperationCodes.InvalidName, "Invalid organization name.");
+            }
+            criteria = criteria ?? new Dictionary<string,ISet<string>>();
+            if(criteria.Count > 100)
+            {
+                throw new DomainException(OperationCodes.TooManyCriteria, 
+                    $"Too many criteria: {criteria.Count} (max: 100).");
             }
             Id = id;
             Name = name;
@@ -50,7 +56,14 @@ namespace Collectively.Services.Groups.Domain
             Codename = name.ToCodename();
             _members.Add(member);
             IsPublic = isPublic;
-            _criteria = criteria ?? new Dictionary<string,string>();            
+            _criteria = new Dictionary<string,ISet<string>>()
+            {
+                ["membership"] = new HashSet<string>{Domain.Criteria.Membership.Invitation}
+            };
+            foreach(var rule in criteria)
+            {
+                _criteria[rule.Key.ToLowerInvariant()] = rule.Value;
+            }           
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
         }
