@@ -40,12 +40,6 @@ namespace Collectively.Services.Groups.Domain
             {
                 throw new DomainException(OperationCodes.InvalidName, "Invalid group name.");
             }
-            criteria = criteria ?? new Dictionary<string,ISet<string>>();
-            if(criteria.Count > 100)
-            {
-                throw new DomainException(OperationCodes.TooManyCriteria, 
-                    $"Too many criteria: {criteria.Count} (max: 100).");
-            }
             Id = id;
             Name = name;
             State = "active";
@@ -53,16 +47,8 @@ namespace Collectively.Services.Groups.Domain
             _members.Add(member);
             IsPublic = isPublic;
             OrganizationId = organizationId;
-            _criteria = new Dictionary<string,ISet<string>>()
-            {
-                ["remark_create"] = new HashSet<string>{Domain.Criteria.Remark.Create.Public},
-                ["remark_resolve"] = new HashSet<string>{Domain.Criteria.Remark.Resolve.Public},
-                ["membership"] = new HashSet<string>{Domain.Criteria.Membership.Invitation}
-            };
-            foreach(var rule in criteria)
-            {
-                _criteria[rule.Key.ToLowerInvariant()] = rule.Value;
-            } 
+            criteria = criteria ?? new Dictionary<string,ISet<string>>();
+            _criteria = Domain.Criteria.MergeForGroupOrFail(criteria);
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
         }  

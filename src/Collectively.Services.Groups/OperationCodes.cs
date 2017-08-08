@@ -13,7 +13,10 @@ namespace Collectively.Services.Groups
         public static string InvalidFile => "invalid_file";
         public static string FileTooBig => "file_too_big";
         public static string TextTooLong => "text_too_long";
-        public static string TooManyCriteria => "too_many_criteria";
+        public static string InvalidCriterion => "invalid_criterion";
+        public static string InvalidCriterionValue => "invalid_criterion_value";
+        public static string InvalidCriterionValues => "invalid_criterion_values";
+        public static string TooManyCriterionValues => "too_many_criterion_values";
         public static string Error => "error";
         public static string InvalidUser => "invalid_user";        
     }
