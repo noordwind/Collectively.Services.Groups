@@ -41,38 +41,38 @@ namespace Collectively.Services.Groups.Domain
         public static IDictionary<string,ISet<string>> DefaultOrganization => _defaultOrganization;
 
         public static IDictionary<string,ISet<string>> MergeForOrganizationOrFail(IDictionary<string,ISet<string>> criteria)
-        => MergeOrFail(criteria, DefaultOrganization);
+        => MergeOrFail(criteria, DefaultOrganization, _defaultOrganizationCriteria);
 
         public static IDictionary<string,ISet<string>> MergeForGroupOrFail(IDictionary<string,ISet<string>> criteria)
-        => MergeOrFail(criteria, DefaultGroup);
+        => MergeOrFail(criteria, DefaultGroup, _defaultGroupCriteria);
 
         private static IDictionary<string,ISet<string>> MergeOrFail(IDictionary<string,ISet<string>> criteria, 
-            IDictionary<string,ISet<string>> mergedCriteria)
+            IDictionary<string,ISet<string>> mergedCriteria, IDictionary<string,ISet<string>> defaultCriteria)
         {
-            ISet<string> existingCriteria;
             foreach(var criterion in criteria)
             {
-                if(!mergedCriteria.TryGetValue(criterion.Key, out existingCriteria))
+                if(!defaultCriteria.ContainsKey(criterion.Key))
                 {
                     throw new DomainException(OperationCodes.InvalidCriterion, 
-                        $"Invalid criterion: '{criterion.Key}'.");
+                        $"Invalid '{criterion.Key}' criterion.");                    
                 }
+                var existingCriteria = defaultCriteria[criterion.Key];
                 var invalidCriteria = criterion.Value.Except(existingCriteria);
                 if(existingCriteria.Any() && invalidCriteria.Any())
                 {
                     throw new DomainException(OperationCodes.InvalidCriterionValues, 
-                        $"Invalid criterion values: '{string.Join(", ", invalidCriteria)}', for: '{criterion.Key}'.");                    
+                        $"Invalid '{criterion.Key}' criterion values: '{string.Join(", ", invalidCriteria)}'.");                    
                 }
                 var invalidCriterionValue = criterion.Value.FirstOrDefault(x => x.Length > 100);
                 if(invalidCriterionValue != null)
                 {
                     throw new DomainException(OperationCodes.InvalidCriterionValue, 
-                        $"Invalid criterion value: '{invalidCriterionValue}', for: '{criterion.Key}'.");                       
+                        $"Invalid '{criterion.Key}' criterion value: '{invalidCriterionValue}'.");                       
                 }
                 if(criterion.Value.Count > 100)
                 {
                     throw new DomainException(OperationCodes.TooManyCriterionValues, 
-                        $"Too many criterion values: {criterion.Value.Count} (max: 100), for: '{criterion.Key}'.");                    
+                        $"Too many '{criterion.Key}' criterion values: {criterion.Value.Count} (max: 100).");                    
                 }
                 mergedCriteria[criterion.Key] = criterion.Value; 
             }
