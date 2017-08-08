@@ -41,10 +41,10 @@ namespace Collectively.Services.Groups.Domain
         public static IDictionary<string,ISet<string>> DefaultOrganization => _defaultOrganization;
 
         public static IDictionary<string,ISet<string>> MergeForOrganizationOrFail(IDictionary<string,ISet<string>> criteria)
-        => MergeOrFail(criteria, DefaultGroup);
+        => MergeOrFail(criteria, DefaultOrganization);
 
         public static IDictionary<string,ISet<string>> MergeForGroupOrFail(IDictionary<string,ISet<string>> criteria)
-        => MergeOrFail(criteria, DefaultOrganization);
+        => MergeOrFail(criteria, DefaultGroup);
 
         private static IDictionary<string,ISet<string>> MergeOrFail(IDictionary<string,ISet<string>> criteria, 
             IDictionary<string,ISet<string>> mergedCriteria)
@@ -61,7 +61,7 @@ namespace Collectively.Services.Groups.Domain
                 if(existingCriteria.Any() && invalidCriteria.Any())
                 {
                     throw new DomainException(OperationCodes.InvalidCriterionValues, 
-                        $"Invalid criterion values: '{string.Join(", ", invalidCriteria)}'.");                    
+                        $"Invalid criterion values: '{string.Join(", ", invalidCriteria)}', for: '{criterion.Key}'.");                    
                 }
                 var invalidCriterionValue = criterion.Value.FirstOrDefault(x => x.Length > 100);
                 if(invalidCriterionValue != null)
@@ -72,7 +72,7 @@ namespace Collectively.Services.Groups.Domain
                 if(criterion.Value.Count > 100)
                 {
                     throw new DomainException(OperationCodes.TooManyCriterionValues, 
-                        $"Too many criterion values: {criterion.Value.Count} (max: 100).");                    
+                        $"Too many criterion values: {criterion.Value.Count} (max: 100), for: '{criterion.Key}'.");                    
                 }
                 mergedCriteria[criterion.Key] = criterion.Value; 
             }
