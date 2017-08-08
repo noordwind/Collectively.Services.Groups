@@ -42,8 +42,8 @@ namespace Collectively.Services.Groups.Services
                     $"Group with name: '{name}' already exists.");
             }
             var user = await _userRepository.GetAsync(userId);
-            Maybe<Organization> organization = null;
-            if(organizationId.HasValue)
+            var organization = new Maybe<Organization>();
+            if(organizationId.HasValue && organizationId != Guid.Empty)
             {
                 organization = await _organizationRepository.GetAsync(organizationId.Value);
                 if(organization.HasNoValue)
