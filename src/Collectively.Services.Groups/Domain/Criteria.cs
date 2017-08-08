@@ -18,11 +18,11 @@ namespace Collectively.Services.Groups.Domain
 
         private static readonly IDictionary<string,ISet<string>> _defaultGroupCriteria = new Dictionary<string,ISet<string>>
         {
-            ["locations"] = new HashSet<string>(),
             ["membership"] = MembershipCriteria,
             ["remark_create"] = RemarkCriteria,
-            ["remark_delete"] = RemarkCriteria,
             ["remark_comment_delete"] = RemarkCriteria,
+            ["remark_delete"] = RemarkCriteria,
+            ["remark_location"] = new HashSet<string>(),
             ["remark_resolve"] = RemarkCriteria
         };
 
