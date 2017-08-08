@@ -8,12 +8,12 @@ namespace Collectively.Services.Groups.Domain
     {
         private static readonly ISet<string> RemarkCriteria = new HashSet<string>
         {
-            "public", "member", "moderator", "administrator", "owner" 
+            "moderator", "administrator", "owner", "member", "public" 
         };
 
         private static readonly ISet<string> MembershipCriteria = new HashSet<string>
         {
-            "public", "user_request", "invitation"
+            "user_request", "invitation", "public"
         };
 
         private static readonly IDictionary<string,ISet<string>> _defaultGroupCriteria = new Dictionary<string,ISet<string>>
@@ -31,12 +31,12 @@ namespace Collectively.Services.Groups.Domain
             ["membership"] = MembershipCriteria
         };
 
-        private static readonly IDictionary<string,ISet<string>> _defaultGroup = 
-            _defaultGroupCriteria.ToDictionary(x => x.Key, x => (ISet<string>)(new HashSet<string>{x.Value.First()}));
-
-        private static readonly IDictionary<string,ISet<string>> _defaultOrganization= 
-            _defaultOrganizationCriteria.ToDictionary(x => x.Key, x => (ISet<string>)(new HashSet<string>{x.Value.First()}));
-
+        private static readonly IDictionary<string,ISet<string>> _defaultGroup = ToDefault(_defaultGroupCriteria);
+        private static readonly IDictionary<string,ISet<string>> _defaultOrganization = ToDefault(_defaultOrganizationCriteria);
+        private static IDictionary<string,ISet<string>> ToDefault(IDictionary<string,ISet<string>> criteria)
+            => criteria.ToDictionary(x => x.Key, x => x.Value.Any() ? 
+                (ISet<string>)(new HashSet<string>{x.Value.First()}) : 
+                (ISet<string>)(new HashSet<string>()));
         public static IDictionary<string,ISet<string>> DefaultGroup => _defaultGroup;
         public static IDictionary<string,ISet<string>> DefaultOrganization => _defaultOrganization;
 
