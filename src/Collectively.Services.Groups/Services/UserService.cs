@@ -19,7 +19,7 @@ namespace Collectively.Services.Groups.Services
         }
 
         public async Task CreateIfNotFoundAsync(string userId, string name, 
-            string role, string state, string avatarUrl)
+            string role, string avatarUrl)
         {
             var user = await _userRepository.GetAsync(userId);
             if (user.HasValue)
@@ -27,24 +27,17 @@ namespace Collectively.Services.Groups.Services
                 return;
             }
             Logger.Info($"Creating a new user: '{userId}', name: '{name}', role: '{role}'.");
-            user = new User(userId, name, role, state, avatarUrl);
+            user = new User(userId, name, role, avatarUrl);
             await _userRepository.AddAsync(user.Value);
         }
 
-        public async Task DeleteAsync(string userId, bool soft)
+        public async Task DeleteAsync(string userId)
         {
             var user = await _userRepository.GetAsync(userId);
             if (user.HasNoValue)
             {
                 throw new ServiceException(OperationCodes.UserNotFound,
                     $"User with id: '{userId}' has not been found.");
-            }
-            if(soft)
-            {
-                user.Value.MarkAsDeleted();
-                await _userRepository.UpdateAsync(user.Value);
-
-                return;
             }
             await _userRepository.DeleteAsync(userId);
         }
