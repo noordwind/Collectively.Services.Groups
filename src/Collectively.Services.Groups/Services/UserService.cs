@@ -30,6 +30,19 @@ namespace Collectively.Services.Groups.Services
             await _userRepository.AddAsync(user.Value);
         }
 
+        public async Task UpdateNameAsync(string userId, string name)
+        {
+            Logger.Debug($"Updating username for user: '{userId}' ['{name}'].");
+            var user = await _userRepository.GetAsync(userId);
+            if (user.HasNoValue)
+            {
+                throw new ServiceException(OperationCodes.UserNotFound,
+                    $"User with id: '{userId}' has not been found.");
+            }
+            user.Value.SetName(name);
+            await _userRepository.UpdateAsync(user.Value);
+        }
+
         public async Task DeleteAsync(string userId)
         {
             var user = await _userRepository.GetAsync(userId);

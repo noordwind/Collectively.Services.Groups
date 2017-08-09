@@ -27,27 +27,25 @@ namespace Collectively.Services.Groups.Handlers
         }
 
         public async Task HandleAsync(CreateGroup command)
-        {
-            await _handler
-                .Run(async () => await _groupService.CreateAsync(command.GroupId, 
-                    command.Name, command.UserId, command.IsPublic, command.Criteria, 
-                    command.OrganizationId))
-                .OnSuccess(async () =>
-                {
-                    var resource = _resourceFactory.Resolve<GroupCreated>(command.GroupId);
-                    await _bus.PublishAsync(new GroupCreated(command.Request.Id, resource, 
-                        command.UserId, command.GroupId, command.OrganizationId));
-                })
-                .OnCustomError(async ex => await _bus.PublishAsync(
-                    new CreateGroupRejected(command.Request.Id, command.UserId,
-                        command.GroupId, ex.Code, ex.Message)))
-                .OnError(async (ex, logger) =>
-                {
-                    logger.Error(ex, $"Error when trying to create a group: '{command.Name}', id: '{command.GroupId}'.");
-                    await _bus.PublishAsync(new CreateGroupRejected(command.Request.Id, command.UserId,
-                        command.GroupId, OperationCodes.Error, "Error when trying to create a group."));
-                })
-                .ExecuteAsync();
-        }
+        => await _handler
+            .Run(async () => await _groupService.CreateAsync(command.GroupId, 
+                command.Name, command.UserId, command.IsPublic, command.Criteria, 
+                command.OrganizationId))
+            .OnSuccess(async () =>
+            {
+                var resource = _resourceFactory.Resolve<GroupCreated>(command.GroupId);
+                await _bus.PublishAsync(new GroupCreated(command.Request.Id, resource, 
+                    command.UserId, command.GroupId, command.OrganizationId));
+            })
+            .OnCustomError(async ex => await _bus.PublishAsync(
+                new CreateGroupRejected(command.Request.Id, command.UserId,
+                    command.GroupId, ex.Code, ex.Message)))
+            .OnError(async (ex, logger) =>
+            {
+                logger.Error(ex, $"Error when trying to create a group: '{command.Name}', id: '{command.GroupId}'.");
+                await _bus.PublishAsync(new CreateGroupRejected(command.Request.Id, command.UserId,
+                    command.GroupId, OperationCodes.Error, "Error when trying to create a group."));
+            })
+            .ExecuteAsync();
     }
 }

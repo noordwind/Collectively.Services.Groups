@@ -18,5 +18,10 @@ namespace Collectively.Services.Groups.Domain
             Name = name;
             Role = role;
         }
+
+        public void SetName(string name)
+        {
+            Name = name;
+        }
     }
 }

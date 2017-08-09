@@ -27,26 +27,24 @@ namespace Collectively.Services.Groups.Handlers
         }
 
         public async Task HandleAsync(CreateOrganization command)
-        {
-            await _handler
-                .Run(async () => await _organizationService.CreateAsync(command.OrganizationId, 
-                    command.Name, command.UserId, command.IsPublic, command.Criteria))
-                .OnSuccess(async () => 
-                {
-                    var resource = _resourceFactory.Resolve<OrganizationCreated>(command.OrganizationId);
-                    await _bus.PublishAsync(new OrganizationCreated(command.Request.Id, 
-                        resource, command.UserId, command.OrganizationId));
-                })
-                .OnCustomError(async ex => await _bus.PublishAsync(
-                    new CreateOrganizationRejected(command.Request.Id, command.UserId,
-                        command.OrganizationId, ex.Code, ex.Message)))
-                .OnError(async (ex, logger) =>
-                {
-                    logger.Error(ex, $"Error when trying to create an organization: '{command.Name}', id: '{command.OrganizationId}'.");
-                    await _bus.PublishAsync(new CreateOrganizationRejected(command.Request.Id, command.UserId,
-                        command.OrganizationId, OperationCodes.Error, "Error when trying to create an organization."));
-                })
-                .ExecuteAsync();
-        }
+        => await _handler
+            .Run(async () => await _organizationService.CreateAsync(command.OrganizationId, 
+                command.Name, command.UserId, command.IsPublic, command.Criteria))
+            .OnSuccess(async () => 
+            {
+                var resource = _resourceFactory.Resolve<OrganizationCreated>(command.OrganizationId);
+                await _bus.PublishAsync(new OrganizationCreated(command.Request.Id, 
+                    resource, command.UserId, command.OrganizationId));
+            })
+            .OnCustomError(async ex => await _bus.PublishAsync(
+                new CreateOrganizationRejected(command.Request.Id, command.UserId,
+                    command.OrganizationId, ex.Code, ex.Message)))
+            .OnError(async (ex, logger) =>
+            {
+                logger.Error(ex, $"Error when trying to create an organization: '{command.Name}', id: '{command.OrganizationId}'.");
+                await _bus.PublishAsync(new CreateOrganizationRejected(command.Request.Id, command.UserId,
+                    command.OrganizationId, OperationCodes.Error, "Error when trying to create an organization."));
+            })
+            .ExecuteAsync();
     }
 }
