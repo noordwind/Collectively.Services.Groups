@@ -7,18 +7,16 @@ namespace Collectively.Services.Groups.Domain
         public string UserId { get; protected set; }
         public string Name { get; protected set; }
         public string Role { get; protected set; }
-        public string AvatarUrl { get; protected set; }
 
         protected User()
         {
         }
 
-        public User(string userId, string name, string role, string avatarUrl)
+        public User(string userId, string name, string role)
         {
             UserId = userId;
             Name = name;
             Role = role;
-            AvatarUrl = avatarUrl;
         }
     }
 }

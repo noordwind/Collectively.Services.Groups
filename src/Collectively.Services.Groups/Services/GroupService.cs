@@ -53,7 +53,7 @@ namespace Collectively.Services.Groups.Services
                         $"organization was not found for given id: '{organizationId}'.");
                 }
             }
-            var owner = Member.Owner(user.Value.UserId, user.Value.Name, user.Value.AvatarUrl);
+            var owner = Member.Owner(user.Value.UserId, user.Value.Name);
             var group = new Group(id, name, owner, isPublic, criteria, organizationId);
             await _groupRepository.AddAsync(group);
             if(organization.HasNoValue)

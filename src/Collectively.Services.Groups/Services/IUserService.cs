@@ -4,8 +4,7 @@ namespace Collectively.Services.Groups.Services
 {
     public interface IUserService
     {
-        Task CreateIfNotFoundAsync(string userId, string name, 
-            string role, string avatarUrl);
+        Task CreateIfNotFoundAsync(string userId, string name, string role);
         Task DeleteAsync(string userId);
     }
 }

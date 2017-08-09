@@ -39,7 +39,7 @@ namespace Collectively.Services.Groups.Services
                     $"Organization with name: '{name}' already exists.");
             }
             var user = await _userRepository.GetAsync(userId);
-            var owner = Member.Owner(user.Value.UserId, user.Value.Name, user.Value.AvatarUrl);
+            var owner = Member.Owner(user.Value.UserId, user.Value.Name);
             var organization = new Organization(id, name, owner, isPublic, criteria);
             await _organizationRepository.AddAsync(organization);
         }
