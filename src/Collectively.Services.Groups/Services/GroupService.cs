@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Collectively.Common.Domain;
 using Collectively.Common.Types;
@@ -12,7 +13,6 @@ namespace Collectively.Services.Groups.Services
     public class GroupService : IGroupService
     {
         private readonly IGroupRepository _groupRepository;
-
         private readonly IUserRepository _userRepository;
         private readonly IOrganizationRepository _organizationRepository;
 
@@ -42,17 +42,8 @@ namespace Collectively.Services.Groups.Services
                     $"Group with name: '{name}' already exists.");
             }
             var user = await _userRepository.GetAsync(userId);
-            var organization = new Maybe<Organization>();
-            if(organizationId.HasValue && organizationId != Guid.Empty)
-            {
-                organization = await _organizationRepository.GetAsync(organizationId.Value);
-                if(organization.HasNoValue)
-                {
-                    throw new ServiceException(OperationCodes.OrganizationNotFound, 
-                        $"Can not create a new group: '{name}' ['{id}'] - " +
-                        $"organization was not found for given id: '{organizationId}'.");
-                }
-            }
+            var organization = await ValidateIfGroupCanBeAddedToOrganizationAsync(
+                id, organizationId, user.Value);
             var owner = Member.Owner(user.Value.UserId, user.Value.Name);
             var group = new Group(id, name, owner, isPublic, criteria, organizationId);
             await _groupRepository.AddAsync(group);
@@ -62,6 +53,39 @@ namespace Collectively.Services.Groups.Services
             }
             organization.Value.AddGroup(group);
             await _organizationRepository.UpdateAsync(organization.Value);
+        }
+
+        private async Task<Maybe<Organization>> ValidateIfGroupCanBeAddedToOrganizationAsync(
+            Guid groupId, Guid? organizationId, User user)
+        {
+            if(!organizationId.HasValue || organizationId.Value == Guid.Empty)
+            {
+                return null;
+            }
+            var organization = await _organizationRepository.GetAsync(organizationId.Value);
+            if(organization.HasNoValue)
+            {
+                throw new ServiceException(OperationCodes.OrganizationNotFound, 
+                    $"Can not create a new group with id: '{groupId}' - " +
+                    $"organization was not found for given id: '{organizationId}'.");
+            }
+            if(user.Role == "moderator" || user.Role == "administrator")
+            {
+                return organization;
+            }
+            var member = organization.Value.Members.SingleOrDefault(x => x.UserId == user.UserId);
+            if(member == null)
+            {
+                throw new ServiceException(OperationCodes.OrganizationMemberNotFound,
+                    $"Organization: '{organizationId}' member: '{user.UserId}' was not found.");
+            }
+            if(member.Role == "administrator" || member.Role == "owner")
+            {
+                return organization;
+            }
+                throw new ServiceException(OperationCodes.OrganizationMemberHasInsufficientRole,
+                    $"Organization: '{organizationId}' member: '{user.UserId}' ." +
+                     "does not have privileges to add a group.");             
         }
     }
 }
