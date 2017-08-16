@@ -51,6 +51,17 @@ namespace Collectively.Services.Groups.Domain
             _criteria = Domain.Criteria.MergeForGroupOrFail(criteria);
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void AddMember(Member member)
+        {
+            if(Members.Contains(member))
+            {
+                throw new DomainException(OperationCodes.GroupMemberAlreadyExists, 
+                    $"Group with id: '{Id}' already contains a member: '{member.UserId}'.");
+            }
+            _members.Add(member);
+            UpdatedAt = DateTime.UtcNow;
         }  
     }
 }

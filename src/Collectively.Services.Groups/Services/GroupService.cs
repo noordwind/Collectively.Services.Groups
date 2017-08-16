@@ -87,5 +87,23 @@ namespace Collectively.Services.Groups.Services
                     $"Organization: '{organizationId}' member: '{user.UserId}' ." +
                      "does not have privileges to add a group.");             
         }
+
+        public async Task AddMemberAsync(Guid id, string memberId, string role)
+        {
+            var group = await GetAsync(id);
+            if(group.HasNoValue)
+            {
+                throw new ServiceException(OperationCodes.GroupNotFound,
+                    $"Group with id: '{id}' was not found.");
+            }
+            var user = await _userRepository.GetAsync(memberId);
+            if(user.HasNoValue)
+            {
+                throw new ServiceException(OperationCodes.UserNotFound,
+                    $"User with id: '{memberId}' was not found.");
+            }
+            group.Value.AddMember(Member.FromRole(user.Value.UserId, user.Value.Name, role));
+            await _groupRepository.UpdateAsync(group.Value);
+        }
     }
 }

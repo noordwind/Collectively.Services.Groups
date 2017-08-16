@@ -10,7 +10,9 @@ namespace Collectively.Services.Groups
         public static string OrganizationMemberHasInsufficientRole => "organization_member_has_insufficient_role";
         public static string InactiveUser => "inactive_user";
         public static string GroupNameInUse => "group_name_in_use";
+        public static string GroupMemberAlreadyExists => "group_member_already_exists";
         public static string OrganizationNameInUse => "organization_name_in_use";
+        public static string OrganizationMemberAlreadyExists => "organization_member_already_exists";
         public static string InvalidName => "invalid_name";
         public static string InvalidFile => "invalid_file";
         public static string FileTooBig => "file_too_big";
@@ -20,6 +22,7 @@ namespace Collectively.Services.Groups
         public static string InvalidCriterionValues => "invalid_criterion_values";
         public static string TooManyCriterionValues => "too_many_criterion_values";
         public static string Error => "error";
-        public static string InvalidUser => "invalid_user";        
+        public static string InvalidUser => "invalid_user";       
+        public static string InvalidMemberRole => "invalid_member_role";   
     }
 }

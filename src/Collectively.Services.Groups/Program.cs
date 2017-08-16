@@ -16,6 +16,8 @@ namespace Collectively.Services.Groups
                 .UseRabbitMq(queueName: typeof(Program).Namespace)
                 .SubscribeToCommand<CreateGroup>()
                 .SubscribeToCommand<CreateOrganization>()
+                .SubscribeToCommand<AddMemberToGroup>()
+                .SubscribeToCommand<AddMemberToOrganization>()
                 .SubscribeToEvent<SignedUp>()
                 .SubscribeToEvent<UsernameChanged>()
                 .SubscribeToEvent<AccountDeleted>()

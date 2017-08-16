@@ -43,5 +43,23 @@ namespace Collectively.Services.Groups.Services
             var organization = new Organization(id, name, owner, isPublic, criteria);
             await _organizationRepository.AddAsync(organization);
         }
+
+        public async Task AddMemberAsync(Guid id, string memberId, string role)
+        {
+            var organization = await GetAsync(id);
+            if(organization.HasNoValue)
+            {
+                throw new ServiceException(OperationCodes.OrganizationNotFound,
+                    $"Organization with id: '{id}' was not found.");
+            }
+            var user = await _userRepository.GetAsync(memberId);
+            if(user.HasNoValue)
+            {
+                throw new ServiceException(OperationCodes.UserNotFound,
+                    $"User with id: '{memberId}' was not found.");
+            }
+            organization.Value.AddMember(Member.FromRole(user.Value.UserId, user.Value.Name, role));
+            await _organizationRepository.UpdateAsync(organization.Value);
+        }
     }
 }

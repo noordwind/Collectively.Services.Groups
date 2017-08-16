@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Collectively.Common.Domain;
 using Collectively.Services.Groups.Framework;
 
@@ -59,6 +60,17 @@ namespace Collectively.Services.Groups.Domain
         public void AddGroup(Group group)
         {
             _groups.Add(group.Id);
-        }        
+        }
+
+        public void AddMember(Member member)
+        {
+            if(Members.Contains(member))
+            {
+                throw new DomainException(OperationCodes.OrganizationMemberAlreadyExists, 
+                    $"Organization with id: '{Id}' already contains a member: '{member.UserId}'.");
+            }
+            _members.Add(member);
+            UpdatedAt = DateTime.UtcNow;
+        }  
     }
 }

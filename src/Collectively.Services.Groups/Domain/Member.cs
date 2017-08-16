@@ -1,6 +1,8 @@
+using Collectively.Common.Domain;
+
 namespace Collectively.Services.Groups.Domain
 {
-    public class Member
+    public class Member : ValueObject<Member>
     {
         public string UserId { get; protected set; }
         public string Name { get; protected set; }
@@ -19,6 +21,12 @@ namespace Collectively.Services.Groups.Domain
             IsActive = true;
         }
 
+        protected override bool EqualsCore(Member other)
+        => UserId == other.UserId;
+
+        protected override int GetHashCodeCore()
+        => UserId.GetHashCode();
+
         public static Member Participant(string userId, string name)
         => new Member(Roles.Participant, userId, name);
 
@@ -30,6 +38,19 @@ namespace Collectively.Services.Groups.Domain
 
         public static Member Owner(string userId, string name)
         => new Member(Roles.Owner, userId, name);
+
+        public static Member FromRole(string userId, string name, string role)
+        {
+            switch(role.ToLowerInvariant())
+            {
+                case "participant": return Participant(userId, name);
+                case "moderator": return Moderator(userId, name);
+                case "administrator": return Administrator(userId, name);
+                case "owner": return Owner(userId, name);
+            }
+            throw new DomainException(OperationCodes.InvalidMemberRole, 
+                $"Invalid member role: '{role}' for user with id: '{userId}'.");
+        }
 
         public static class Roles 
         {
