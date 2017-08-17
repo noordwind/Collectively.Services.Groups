@@ -8,7 +8,7 @@ namespace Collectively.Services.Groups.Domain
     {
         private static readonly ISet<string> RemarkCriteria = new HashSet<string>
         {
-            "moderator", "administrator", "owner", "member", "public" 
+            "moderator", "administrator", "owner", "participant", "public" 
         };
 
         private static readonly ISet<string> MembershipCriteria = new HashSet<string>
