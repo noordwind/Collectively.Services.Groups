@@ -13,7 +13,6 @@ namespace Collectively.Services.Groups.Handlers
         private readonly IHandler _handler;
         private readonly IBusClient _bus;
         private readonly IGroupService _groupService;
-        private readonly IResourceFactory _resourceFactory;
 
         public AddMemberToGroupHandler(IHandler handler,
             IBusClient bus,  IGroupService groupService)
