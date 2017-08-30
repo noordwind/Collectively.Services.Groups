@@ -3,13 +3,13 @@ using System.Threading.Tasks;
 using Collectively.Common.Domain;
 using Collectively.Services.Groups.Domain;
 using Collectively.Services.Groups.Repositories;
-using NLog;
+using Serilog;
 
 namespace Collectively.Services.Groups.Services
 {
     public class UserService : IUserService
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Logger = Log.Logger;
 
         private readonly IUserRepository _userRepository;
 
@@ -25,7 +25,7 @@ namespace Collectively.Services.Groups.Services
             {
                 return;
             }
-            Logger.Info($"Creating a new user: '{userId}', name: '{name}', role: '{role}'.");
+            Logger.Information($"Creating a new user: '{userId}', name: '{name}', role: '{role}'.");
             user = new User(userId, name, role);
             await _userRepository.AddAsync(user.Value);
         }

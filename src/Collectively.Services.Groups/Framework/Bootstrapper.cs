@@ -10,7 +10,7 @@ using Collectively.Common.Security;
 using Microsoft.Extensions.Configuration;
 using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Autofac;
-using NLog;
+using Serilog;
 using RawRabbit.Configuration;
 using System.Reflection;
 using Collectively.Common.Exceptionless;
@@ -31,7 +31,7 @@ namespace Collectively.Services.Groups.Framework
 {
     public class Bootstrapper : AutofacNancyBootstrapper
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Logger = Log.Logger;
         private static IExceptionHandler _exceptionHandler;
         private readonly IConfiguration _configuration;
         public static ILifetimeScope LifetimeScope { get; private set; }
@@ -107,7 +107,7 @@ namespace Collectively.Services.Groups.Framework
             };
             pipelines.SetupTokenAuthentication(container);
             _exceptionHandler = container.Resolve<IExceptionHandler>();
-            Logger.Info("Collectively.Services.Groups API has started.");
+            Logger.Information("Collectively.Services.Groups API has started.");
         }
 
         private void RegisterResourceFactory(ContainerBuilder builder)

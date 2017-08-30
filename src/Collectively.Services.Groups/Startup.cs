@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Collectively.Common.Logging;
 using Collectively.Services.Groups.Framework;
 using Lockbox.Client.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -12,8 +13,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nancy.Owin;
-using NLog.Extensions.Logging;
-using NLog.Web;
 
 namespace Collectively.Services.Groups
 {
@@ -42,6 +41,7 @@ namespace Collectively.Services.Groups
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddSerilog(Configuration);
             services.AddWebEncoders();
             services.AddCors();
             ApplicationContainer = GetServiceContainer(services);
@@ -51,9 +51,7 @@ namespace Collectively.Services.Groups
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddNLog();
-            app.AddNLogWeb();
-            env.ConfigureNLog("nlog.config");
+            app.UseSerilog(loggerFactory);
             app.UseCors(builder => builder.AllowAnyHeader()
 	            .AllowAnyMethod()
 	            .AllowAnyOrigin()
