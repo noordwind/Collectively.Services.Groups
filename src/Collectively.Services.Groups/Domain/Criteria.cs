@@ -23,7 +23,10 @@ namespace Collectively.Services.Groups.Domain
             ["remark_comment_delete"] = RemarkCriteria,
             ["remark_delete"] = RemarkCriteria,
             ["remark_location"] = new HashSet<string>(),
-            ["remark_resolve"] = RemarkCriteria
+            ["remark_resolve"] = RemarkCriteria,
+            ["remark_renew"] = RemarkCriteria,
+            ["remark_process"] = RemarkCriteria,
+            ["remark_cancel"] = RemarkCriteria
         };
 
         private static readonly IDictionary<string,ISet<string>> _defaultOrganizationCriteria = new Dictionary<string,ISet<string>>
