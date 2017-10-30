@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Collectively.Common.Domain;
+using Collectively.Common.Extensions;
 using Collectively.Services.Groups.Framework;
 
 namespace Collectively.Services.Groups.Domain
@@ -10,6 +11,7 @@ namespace Collectively.Services.Groups.Domain
     {
         private IDictionary<string,ISet<string>> _criteria = new Dictionary<string,ISet<string>>();
         private ISet<Member> _members = new HashSet<Member>();
+        private ISet<string> _tags = new HashSet<string>();
         public Guid? OrganizationId { get; protected set; }
         public string Name { get; protected set; }
         public string Codename { get; protected set; }
@@ -28,13 +30,19 @@ namespace Collectively.Services.Groups.Domain
             get { return _criteria; }
             protected set { _criteria = new Dictionary<string,ISet<string>>(value); }
         }
+        public IEnumerable<string> Tags
+        {
+            get { return _tags; }
+            protected set { _tags = new HashSet<string>(value); }
+        }
 
         protected Group()
         {
         } 
 
         public Group(Guid id, string name, Member member, bool isPublic,
-            IDictionary<string,ISet<string>> criteria, Guid? organizationId = null)
+            IDictionary<string,ISet<string>> criteria, IEnumerable<string> tags,
+            Guid? organizationId = null)
         {
             if(name.Length > 100)
             {
@@ -49,6 +57,7 @@ namespace Collectively.Services.Groups.Domain
             OrganizationId = organizationId;
             criteria = criteria ?? new Dictionary<string,ISet<string>>();
             _criteria = Domain.Criteria.MergeForGroupOrFail(criteria);
+            Tags = tags?.Select(x => ParseTag(x)) ?? Enumerable.Empty<string>();
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
         }
@@ -63,5 +72,20 @@ namespace Collectively.Services.Groups.Domain
             _members.Add(member);
             UpdatedAt = DateTime.UtcNow;
         }  
+
+        public void AddTag(string tag)
+        {
+            _tags.Add(ParseTag(tag));
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void RemoveTag(string tag)
+        {
+            _tags.Remove(ParseTag(tag));
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        private static string ParseTag(string tag)
+            => tag.TrimToLower().Replace(" ", string.Empty);
     }
 }

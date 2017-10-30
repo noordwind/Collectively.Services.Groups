@@ -14,7 +14,8 @@ namespace Collectively.Services.Groups.Dto
         public SubjectDetailsDto Details { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public IList<MemberDto> Members { get; set; }
+        public IEnumerable<string> Tags { get; set; }
+        public IEnumerable<MemberDto> Members { get; set; }
         public IDictionary<string,ISet<string>> Criteria { get; set; }
     }
 }

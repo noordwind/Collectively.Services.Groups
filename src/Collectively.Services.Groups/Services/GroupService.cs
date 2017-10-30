@@ -34,7 +34,8 @@ namespace Collectively.Services.Groups.Services
         => await _groupRepository.BrowseAsync(query);
 
         public async Task CreateAsync(Guid id, string name, string userId, bool isPublic, 
-            IDictionary<string,ISet<string>> criteria, Guid? organizationId = null)
+            IDictionary<string,ISet<string>> criteria, IEnumerable<string> tags,
+            Guid? organizationId = null)
         {
             if(await ExistsAsync(name))
             {
@@ -45,7 +46,7 @@ namespace Collectively.Services.Groups.Services
             var organization = await ValidateIfGroupCanBeAddedToOrganizationAsync(
                 id, organizationId, user.Value);
             var owner = Member.Owner(user.Value.UserId, user.Value.Name);
-            var group = new Group(id, name, owner, isPublic, criteria, organizationId);
+            var group = new Group(id, name, owner, isPublic, criteria, tags, organizationId);
             await _groupRepository.AddAsync(group);
             if(organization.HasNoValue)
             {
