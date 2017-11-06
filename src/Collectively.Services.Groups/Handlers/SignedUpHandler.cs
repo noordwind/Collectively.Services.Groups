@@ -30,6 +30,10 @@ namespace Collectively.Services.Groups.Handlers
                 await _userService.CreateIfNotFoundAsync(@event.UserId, 
                     user.Value.Name, user.Value.Role);
             })
+            .OnError((ex, logger) =>
+            {
+                logger.Error(ex, $"Error occured while handling {@event.GetType().Name} event");
+            })
             .ExecuteAsync();
     }
 }

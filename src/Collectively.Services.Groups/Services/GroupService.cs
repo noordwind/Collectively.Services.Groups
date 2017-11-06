@@ -15,13 +15,20 @@ namespace Collectively.Services.Groups.Services
         private readonly IGroupRepository _groupRepository;
         private readonly IUserRepository _userRepository;
         private readonly IOrganizationRepository _organizationRepository;
+        private readonly ITagRepository _tagRepository;
+        private readonly ITagManager _tagManager;
 
         public GroupService(IGroupRepository groupRepository,
-            IUserRepository userRepository, IOrganizationRepository organizationRepository)
+            IUserRepository userRepository, 
+            IOrganizationRepository organizationRepository,
+            ITagRepository tagRepository,
+            ITagManager tagManager)
         {
             _groupRepository = groupRepository;
             _userRepository = userRepository;
             _organizationRepository = organizationRepository;
+            _tagRepository = tagRepository;
+            _tagManager = tagManager;
         }
 
         public async Task<bool> ExistsAsync(string name)
@@ -34,19 +41,26 @@ namespace Collectively.Services.Groups.Services
         => await _groupRepository.BrowseAsync(query);
 
         public async Task CreateAsync(Guid id, string name, string userId, bool isPublic, 
-            IDictionary<string,ISet<string>> criteria, IEnumerable<string> tags,
+            IDictionary<string,ISet<string>> criteria, IEnumerable<Guid> tags,
             Guid? organizationId = null)
         {
+
             if(await ExistsAsync(name))
             {
                 throw new ServiceException(OperationCodes.GroupNameInUse,
                     $"Group with name: '{name}' already exists.");
             }
+            var groupTags = await _tagManager.FindAsync(tags);
+            if (groupTags.HasNoValue || !groupTags.Value.Any())
+            {
+                throw new ServiceException(OperationCodes.TagsNotProvided,
+                    $"Tags were not provided for group: '{id}'.");
+            }
             var user = await _userRepository.GetAsync(userId);
             var organization = await ValidateIfGroupCanBeAddedToOrganizationAsync(
                 id, organizationId, user.Value);
             var owner = Member.Owner(user.Value.UserId, user.Value.Name);
-            var group = new Group(id, name, owner, isPublic, criteria, tags, organizationId);
+            var group = new Group(id, name, owner, isPublic, criteria, groupTags.Value, organizationId);
             await _groupRepository.AddAsync(group);
             if(organization.HasNoValue)
             {

@@ -24,6 +24,10 @@ namespace Collectively.Services.Groups.Handlers
             {
                 await _userService.UpdateNameAsync(@event.UserId, @event.NewName);
             })
+            .OnError((ex, logger) =>
+            {
+                logger.Error(ex, $"Error occured while handling {@event.GetType().Name} event");
+            })
             .ExecuteAsync();
     }
 }

@@ -20,21 +20,19 @@ namespace Collectively.Services.Groups
     {
         public string EnvironmentName {get;set;}
         public IConfiguration Configuration { get; set; }
-        public IContainer ApplicationContainer { get; set; }
+        public IServiceCollection Services { get; set; }
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddSerilog(Configuration);
             services.AddWebEncoders();
             services.AddCors();
-            ApplicationContainer = GetServiceContainer(services);
-
-            return new AutofacServiceProvider(ApplicationContainer);
+            Services = services;
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -44,7 +42,7 @@ namespace Collectively.Services.Groups
 	            .AllowAnyMethod()
 	            .AllowAnyOrigin()
 	            .AllowCredentials());
-            app.UseOwin().UseNancy(x => x.Bootstrapper = new Bootstrapper(Configuration));
+            app.UseOwin().UseNancy(x => x.Bootstrapper = new Bootstrapper(Configuration, Services));
         }
 
         protected static IContainer GetServiceContainer(IEnumerable<ServiceDescriptor> services)

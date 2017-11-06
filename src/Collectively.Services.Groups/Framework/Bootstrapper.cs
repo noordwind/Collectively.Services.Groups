@@ -26,6 +26,8 @@ using Collectively.Services.Groups.Repositories;
 using Collectively.Services.Groups.Services;
 using Collectively.Common.ServiceClients;
 using Collectively.Messages.Events.Groups;
+using Microsoft.Extensions.DependencyInjection;
+using Autofac.Extensions.DependencyInjection;
 
 namespace Collectively.Services.Groups.Framework
 {
@@ -34,11 +36,13 @@ namespace Collectively.Services.Groups.Framework
         private static readonly ILogger Logger = Log.Logger;
         private static IExceptionHandler _exceptionHandler;
         private readonly IConfiguration _configuration;
+        private readonly IServiceCollection _services;
         public static ILifetimeScope LifetimeScope { get; private set; }
 
-        public Bootstrapper(IConfiguration configuration)
+        public Bootstrapper(IConfiguration configuration, IServiceCollection services)
         {
             _configuration = configuration;
+            _services = services;
         }
 
 #if DEBUG
@@ -54,6 +58,7 @@ namespace Collectively.Services.Groups.Framework
             base.ConfigureApplicationContainer(container);
             container.Update(builder =>
             {
+                builder.Populate(_services);
                 builder.RegisterType<CustomJsonSerializer>().As<JsonSerializer>().SingleInstance();
                 builder.RegisterInstance(_configuration.GetSettings<MongoDbSettings>());
                 builder.RegisterModule<MongoDbModule>();
@@ -63,12 +68,15 @@ namespace Collectively.Services.Groups.Framework
                 builder.RegisterInstance(_configuration.GetSettings<ExceptionlessSettings>()).SingleInstance();
                 builder.RegisterType<ExceptionlessExceptionHandler>().As<IExceptionHandler>().SingleInstance();
                 builder.RegisterModule(new FilesModule(_configuration));
-                builder.RegisterType<GroupRepository>().As<IGroupRepository>();
-                builder.RegisterType<OrganizationRepository>().As<IOrganizationRepository>();
-                builder.RegisterType<UserRepository>().As<IUserRepository>();
-                builder.RegisterType<GroupService>().As<IGroupService>();
-                builder.RegisterType<OrganizationService>().As<IOrganizationService>();
-                builder.RegisterType<UserService>().As<IUserService>();
+                builder.RegisterType<GroupRepository>().As<IGroupRepository>().InstancePerLifetimeScope();
+                builder.RegisterType<OrganizationRepository>().As<IOrganizationRepository>().InstancePerLifetimeScope();
+                builder.RegisterType<TagRepository>().As<ITagRepository>().InstancePerLifetimeScope();
+                builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
+                builder.RegisterType<GroupService>().As<IGroupService>().InstancePerLifetimeScope();
+                builder.RegisterType<OrganizationService>().As<IOrganizationService>().InstancePerLifetimeScope();
+                builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
+                builder.RegisterType<TagManager>().As<ITagManager>().InstancePerLifetimeScope();
+                builder.RegisterType<TagService>().As<ITagService>().InstancePerLifetimeScope();
                 builder.RegisterModule<ServiceClientModule>();
                 builder.RegisterInstance(AutoMapperConfig.InitializeMapper());
                 RegisterResourceFactory(builder);

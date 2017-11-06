@@ -13,6 +13,7 @@ namespace Collectively.Services.Groups
         public static string GroupMemberAlreadyExists => "group_member_already_exists";
         public static string OrganizationNameInUse => "organization_name_in_use";
         public static string OrganizationMemberAlreadyExists => "organization_member_already_exists";
+        public static string TagsNotProvided => "tags_not_provided";
         public static string InvalidName => "invalid_name";
         public static string InvalidFile => "invalid_file";
         public static string FileTooBig => "file_too_big";

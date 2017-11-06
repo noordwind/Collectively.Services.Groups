@@ -1,6 +1,7 @@
 ﻿using Collectively.Common.Host;
 using Collectively.Messages.Commands.Groups;
 using Collectively.Messages.Commands.Users;
+using Collectively.Messages.Events.Remarks;
 using Collectively.Messages.Events.Users;
 using Collectively.Services.Groups.Framework;
 
@@ -21,6 +22,7 @@ namespace Collectively.Services.Groups
                 .SubscribeToEvent<SignedUp>()
                 .SubscribeToEvent<UsernameChanged>()
                 .SubscribeToEvent<AccountDeleted>()
+                .SubscribeToEvent<TagsCreated>()
                 .Build()
                 .Run();
         }

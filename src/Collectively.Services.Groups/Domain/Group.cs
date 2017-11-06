@@ -11,7 +11,7 @@ namespace Collectively.Services.Groups.Domain
     {
         private IDictionary<string,ISet<string>> _criteria = new Dictionary<string,ISet<string>>();
         private ISet<Member> _members = new HashSet<Member>();
-        private ISet<string> _tags = new HashSet<string>();
+        private ISet<GroupTag> _tags = new HashSet<GroupTag>();
         public Guid? OrganizationId { get; protected set; }
         public string Name { get; protected set; }
         public string Codename { get; protected set; }
@@ -30,10 +30,10 @@ namespace Collectively.Services.Groups.Domain
             get { return _criteria; }
             protected set { _criteria = new Dictionary<string,ISet<string>>(value); }
         }
-        public IEnumerable<string> Tags
+        public IEnumerable<GroupTag> Tags
         {
             get { return _tags; }
-            protected set { _tags = new HashSet<string>(value); }
+            protected set { _tags = new HashSet<GroupTag>(value); }
         }
 
         protected Group()
@@ -41,8 +41,8 @@ namespace Collectively.Services.Groups.Domain
         } 
 
         public Group(Guid id, string name, Member member, bool isPublic,
-            IDictionary<string,ISet<string>> criteria, IEnumerable<string> tags,
-            Guid? organizationId = null)
+            IDictionary<string,ISet<string>> criteria,
+            IEnumerable<GroupTag> tags, Guid? organizationId = null)
         {
             if(name.Length > 100)
             {
@@ -57,7 +57,7 @@ namespace Collectively.Services.Groups.Domain
             OrganizationId = organizationId;
             criteria = criteria ?? new Dictionary<string,ISet<string>>();
             _criteria = Domain.Criteria.MergeForGroupOrFail(criteria);
-            Tags = tags?.Select(x => ParseTag(x)) ?? Enumerable.Empty<string>();
+            Tags = tags ?? Enumerable.Empty<GroupTag>();
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
         }
@@ -73,19 +73,16 @@ namespace Collectively.Services.Groups.Domain
             UpdatedAt = DateTime.UtcNow;
         }  
 
-        public void AddTag(string tag)
+        public void AddTag(GroupTag tag)
         {
-            _tags.Add(ParseTag(tag));
+            _tags.Add(tag);
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void RemoveTag(string tag)
+        public void RemoveTag(Guid id)
         {
-            _tags.Remove(ParseTag(tag));
+            _tags.Remove(_tags.SingleOrDefault(x => x.Id == id));
             UpdatedAt = DateTime.UtcNow;
         }
-
-        private static string ParseTag(string tag)
-            => tag.TrimToLower().Replace(" ", string.Empty);
     }
 }

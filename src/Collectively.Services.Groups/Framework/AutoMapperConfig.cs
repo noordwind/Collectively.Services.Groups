@@ -11,9 +11,12 @@ namespace Collectively.Services.Groups.Framework
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<Group, GroupDto>();
+                cfg.CreateMap<GroupTag, GroupTagDto>();
                 cfg.CreateMap<Member, MemberDto>();
                 cfg.CreateMap<Organization, OrganizationDto>();
                 cfg.CreateMap<SubjectDetails, SubjectDetailsDto>();
+                cfg.CreateMap<Tag, TagDto>();
+                cfg.CreateMap<TranslatedTag, TranslatedTagDto>();
                 cfg.CreateMap<User, UserDto>();
             });
 
